@@ -3,7 +3,6 @@ import random
 import torch
 
 from pyg_dataset import SyntheticRewiringDataset
-from y_vals import compute_y_values
 
 # Set a random seed for reproducibility.
 random.seed(42)
@@ -12,7 +11,7 @@ torch.manual_seed(42)
 
 # Define dataset parameters.
 root = './synthetic_dataset'
-num_graphs = 100
+num_graphs = 12000
 min_nodes = 40
 max_nodes = 80
 min_clusters = 3
@@ -22,7 +21,10 @@ p_intra = 0.8
 p_inter = 0.1
 p_inter_remove = 0.9
 p_intra_remove = 0.05
-p_add = 0.1
+p_inter_add = 0.2
+p_intra_add = 0.2
+metric_list = ['modularity', 'spectral_gap', 'random_walk_stability', 'conductance']
+
 
 # Create the dataset (if not already processed, it will be generated).
 dataset = SyntheticRewiringDataset(root=root,
@@ -36,17 +38,11 @@ dataset = SyntheticRewiringDataset(root=root,
                                    p_inter=p_inter,
                                    p_inter_remove=p_inter_remove,
                                    p_intra_remove=p_intra_remove,
-                                   p_add=p_add)
+                                   p_inter_add=p_inter_add,
+                                   p_intra_add=p_intra_add,
+                                   metrics_list=metric_list)
 
 print("Dataset has", len(dataset), "graphs.")
-
-# Compute regression y values using n randomly initialized GNN models.
-num_models = 8  # For example, 3 different random models.
-dataset = compute_y_values(dataset, num_models=num_models, batch_size=16,
-                           in_channels=6, hidden_channels=16, num_layers=3)
-
-# Save the updated dataset (with y values) for later loading in PyG.
-torch.save((dataset.data, dataset.slices), dataset.processed_paths[0])
 
 # Example: Print out the y attribute of the first graph.
 sample = dataset[0]

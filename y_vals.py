@@ -4,7 +4,7 @@ from models.simple_gnn import SimpleGNN
 from torch_geometric.data import Data
 
 
-def compute_y_values(dataset, num_models=3, batch_size=16, in_channels=6, hidden_channels=16, num_layers=3):
+def compute_y_values(dataset, num_models=3, batch_size=16, in_channels=6, hidden_channels=16, num_layers=3, edge_dim=6):
     """
     For each graph in the dataset, run n randomly initialized GNN models (on GPU if available)
     to get a regression value (normalized to [0, 1]). The final y attribute for each graph will be a tensor
@@ -12,7 +12,7 @@ def compute_y_values(dataset, num_models=3, batch_size=16, in_channels=6, hidden
     """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # Create n random models.
-    models = [SimpleGNN(in_channels, hidden_channels, num_layers).to(device) for _ in range(num_models)]
+    models = [SimpleGNN(in_channels, hidden_channels, num_layers, edge_dim).to(device) for _ in range(num_models)]
 
     # Prepare a DataLoader for the dataset.
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
