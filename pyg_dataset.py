@@ -82,7 +82,10 @@ class SyntheticRewiringDataset(InMemoryDataset):
             # Optionally store additional metadata.
             data.num_nodes = num_nodes
             data.num_clusters = num_clusters
+            data.name = f'graph_{i}'
             data_list.append(data)
+            # store dummy y values
+            data.y = None
 
         data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
