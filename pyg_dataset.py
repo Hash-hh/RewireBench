@@ -89,6 +89,8 @@ class SyntheticRewiringDataset(InMemoryDataset):
 
             data_list.append(data)
 
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
         data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
-

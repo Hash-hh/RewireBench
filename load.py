@@ -2,7 +2,7 @@ from pyg_dataset import SyntheticRewiringDataset
 import torch
 
 # Load the dataset
-dataset = SyntheticRewiringDataset(root='./synthetic_dataset')
+dataset = SyntheticRewiringDataset(root='./rewire_bench')
 
 # Get number of predictions per graph
 num_preds = dataset[0].y.shape[0]

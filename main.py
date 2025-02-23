@@ -10,13 +10,13 @@ np.random.seed(42)
 torch.manual_seed(42)
 
 # Define dataset parameters.
-root = './synthetic_dataset'
+root = './rewire_bench'
 num_graphs = 12000
-min_nodes = 40
-max_nodes = 80
-min_clusters = 3
+min_nodes = 30
+max_nodes = 60
+min_clusters = 2
 max_clusters = 6
-H = 0.8
+H = 0.8  # Homophily parameter
 p_intra = 0.8
 p_inter = 0.1
 p_inter_remove = 0.9
