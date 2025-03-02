@@ -93,29 +93,3 @@ def compute_conductance(G):
     # Clip to [0,1]
     label = max(0.0, min(1.0, label))
     return label
-
-
-def compute_all_metrics(G, metrics=None):
-    """
-    Compute specified metrics and return as a numpy array.
-
-    Parameters:
-        G: networkx graph
-        metrics: list of strings, valid values are 'modularity', 'spectral_gap',
-                'random_walk_stability', 'conductance'. If None, compute all metrics.
-
-    Returns:
-        numpy array containing the computed metrics in the same order as requested
-    """
-    metric_funcs = {
-        'modularity': compute_modularity,
-        'spectral_gap': compute_spectral_gap,
-        'random_walk_stability': lambda g: compute_random_walk_stability(g, T=10, num_walks=100),
-        'conductance': compute_conductance
-    }
-
-    if metrics is None:
-        metrics = list(metric_funcs.keys())
-
-    results = [metric_funcs[m](G) for m in metrics]
-    return np.array(results, dtype=np.float32)

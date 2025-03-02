@@ -11,20 +11,30 @@ torch.manual_seed(42)
 
 # Define dataset parameters.
 root = './rewire_bench'
+
+# graph generation parameters
 num_graphs = 12000
 min_nodes = 30
 max_nodes = 60
 min_clusters = 2
 max_clusters = 6
-H = 0.8  # Homophily parameter
-p_intra = 0.8
-p_inter = 0.1
-p_inter_remove = 0.9
-p_intra_remove = 0.05
-p_inter_add = 0.2
-p_intra_add = 0.2
-metric_list = ['modularity', 'spectral_gap', 'random_walk_stability', 'conductance']
+num_features = 1
+H = 1  # Homophily parameter; with probability H a node gets its preferred one-hot feature. (put 1 to always get the cluster id feature)
+p_intra = 0.8  # Intra-cluster connection probability.
+p_inter = 0.1  # Inter-cluster connection probability.
 
+# graph rewiring (modification) parameters
+p_inter_remove = 0.9  # Probability to remove an inter-cluster edge.
+p_intra_remove = 0.05  # Probability to remove an intra-cluster edge.
+p_inter_add = 0.2  # Probability to add an inter-cluster edge.
+p_intra_add = 0.2  # Probability to add an intra-cluster edge.
+
+# List of metrics to compute.
+metric_list = [
+                'local_easy1', 'local_easy2', 'local_easy3',
+                'local_hard1', 'local_hard2', 'local_hard3',
+                # 'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
+               ]
 
 # Create the dataset (if not already processed, it will be generated).
 dataset = SyntheticRewiringDataset(root=root,
@@ -33,6 +43,7 @@ dataset = SyntheticRewiringDataset(root=root,
                                    max_nodes=max_nodes,
                                    min_clusters=min_clusters,
                                    max_clusters=max_clusters,
+                                   num_features=num_features,
                                    H=H,
                                    p_intra=p_intra,
                                    p_inter=p_inter,
@@ -43,18 +54,3 @@ dataset = SyntheticRewiringDataset(root=root,
                                    metrics_list=metric_list)
 
 print("Dataset has", len(dataset), "graphs.")
-
-# Example: Print out the y attribute of the first graph.
-sample = dataset[0]
-print("Sample graph regression targets (y):", sample.y)
-
-# After computing y values
-all_y = torch.cat([data.y for data in dataset])
-mean_y = all_y.mean()
-std_y = all_y.std()
-
-print(f"Y values statistics:")
-print(f"Mean: {mean_y:.4f}")
-print(f"Std: {std_y:.4f}")
-print(f"Min: {all_y.min():.4f}")
-print(f"Max: {all_y.max():.4f}")

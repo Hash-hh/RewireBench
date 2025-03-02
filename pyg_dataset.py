@@ -5,12 +5,12 @@ from torch_geometric.data import InMemoryDataset, Data
 from graph_rewiring import modify_graph
 from graph_generation import generate_synthetic_graph
 from utils import convert_to_pyg
-from y_metrics import compute_all_metrics
+from y_metrics.compute_all_metrics import compute_all_metrics
 
 
 class SyntheticRewiringDataset(InMemoryDataset):
     def __init__(self, root, num_graphs=100, min_nodes=40, max_nodes=80,
-                 min_clusters=3, max_clusters=6, H=0.8,
+                 min_clusters=3, max_clusters=6, num_features=1, H=0.8,
                  p_intra=0.8, p_inter=0.1,
                  p_inter_remove=0.9, p_intra_remove=0.05,
                  p_inter_add=0.2, p_intra_add=0.2,
@@ -21,6 +21,7 @@ class SyntheticRewiringDataset(InMemoryDataset):
         self.max_nodes = max_nodes
         self.min_clusters = min_clusters
         self.max_clusters = max_clusters
+        self.node_features = num_features
         self.H = H
         self.p_intra = p_intra
         self.p_inter = p_inter
@@ -30,7 +31,7 @@ class SyntheticRewiringDataset(InMemoryDataset):
         self.p_intra_add = p_intra_add
         self.metrics_list = metrics_list
         super(SyntheticRewiringDataset, self).__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data_list = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
@@ -52,7 +53,7 @@ class SyntheticRewiringDataset(InMemoryDataset):
             num_clusters = random.randint(self.min_clusters, self.max_clusters)
 
             # --- Generate the Original Graph ---
-            G = generate_synthetic_graph(num_nodes, num_clusters, H=self.H,
+            G = generate_synthetic_graph(num_nodes, num_clusters, num_features=self.node_features, H=self.H,
                                          p_intra=self.p_intra, p_inter=self.p_inter)
             data_org = convert_to_pyg(G)
             # Save original connectivity.
@@ -92,5 +93,10 @@ class SyntheticRewiringDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        torch.save(data_list, self.processed_paths[0])
+
+    def __len__(self):
+        return len(self.data_list)
+
+    def __getitem__(self, idx):
+        return self.data_list[idx]

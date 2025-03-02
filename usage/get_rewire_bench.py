@@ -26,13 +26,19 @@ class SyntheticRewiringDataset(InMemoryDataset):
         pass
 
     def process(self):
-        """Apply pre_transform if needed but never regenerate data from scratch."""
+        """Process raw data into processed form."""
+        os.makedirs(self.processed_dir, exist_ok=True)
+
+        # Load the raw data list
         raw_path = os.path.join(self.raw_dir, self.raw_file_names[0])
-        data, slices = torch.load(raw_path)  # Load raw dataset
+        data_list = torch.load(raw_path)
 
         # Apply pre_transform if defined
         if self.pre_transform is not None:
-            data_list = [self.pre_transform(data[i]) for i in range(len(data))]
-            data, slices = self.collate(data_list)
+            data_list = [self.pre_transform(d) for d in data_list]
 
-        torch.save((data, slices), self.processed_paths[0])  # Save processed version
+        # Collate the data list
+        data, slices = self.collate(data_list)
+
+        # Save processed dataset
+        torch.save((data, slices), self.processed_paths[0])
