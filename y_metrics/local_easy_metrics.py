@@ -12,7 +12,7 @@ def compute_local_easy1(G):
         if G.degree(node) == 0:
             continue
 
-        node_feat = G.nodes[node]['x'][0]  # Using first feature dimension
+        node_feat = G.nodes[node]['x'][0]  # Using first feature dimension  TODO: Allow for multiple features
         neighbors = list(G.neighbors(node))
         neighbor_feats = [G.nodes[neigh]['x'][0] for neigh in neighbors]
 
