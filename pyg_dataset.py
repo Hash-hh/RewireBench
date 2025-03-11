@@ -15,7 +15,7 @@ class SyntheticRewiringDataset(InMemoryDataset):
                  p_inter_remove=0.9, p_intra_remove=0.05,
                  p_inter_add=0.2, p_intra_add=0.2,
                  transform=None, pre_transform=None,
-                 metrics_list=None):
+                 metrics_list=None, aux_feat_multiple=1, aux_feat_variability=0.1, edge_weight=0.3):
         self.num_graphs = num_graphs
         self.min_nodes = min_nodes
         self.max_nodes = max_nodes
@@ -30,6 +30,9 @@ class SyntheticRewiringDataset(InMemoryDataset):
         self.p_inter_add = p_inter_add
         self.p_intra_add = p_intra_add
         self.metrics_list = metrics_list
+        self.aux_feat_multiple = aux_feat_multiple
+        self.aux_feat_variability = aux_feat_variability
+        self.edge_weight = edge_weight
         super(SyntheticRewiringDataset, self).__init__(root, transform, pre_transform)
         self.data_list = torch.load(self.processed_paths[0])
 
@@ -61,7 +64,8 @@ class SyntheticRewiringDataset(InMemoryDataset):
             org_edge_attr = data_org.edge_attr.clone() if hasattr(data_org, 'edge_attr') else None
 
             # Compute all metrics on the original graph.
-            metrics_org = compute_all_metrics(G, metrics=self.metrics_list)
+            metrics_org = compute_all_metrics(G.copy(), metrics=self.metrics_list, multiple=self.aux_feat_multiple,
+                                              variability=self.aux_feat_variability, edge_weight=self.edge_weight)
 
             # --- Apply Modifications (Rewiring) ---
             G_mod = modify_graph(G, p_inter_remove=self.p_inter_remove,
@@ -71,7 +75,8 @@ class SyntheticRewiringDataset(InMemoryDataset):
             data_mod = convert_to_pyg(G_mod)
 
             # Compute metrics on the rewired graph.
-            metrics_rewire = compute_all_metrics(G_mod, metrics=self.metrics_list)
+            metrics_rewire = compute_all_metrics(G_mod.copy(), metrics=self.metrics_list, multiple=self.aux_feat_multiple,
+                                                 variability=self.aux_feat_variability, edge_weight=self.edge_weight)
 
             # Create final Data object.
             data = Data(x=data_mod.x,

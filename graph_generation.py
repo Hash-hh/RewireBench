@@ -60,10 +60,13 @@ def generate_synthetic_graph(num_nodes, num_clusters, num_features=1, H=0.8, p_i
     for i in range(num_gaussians):
         # Randomize mean within a reasonable range around base position
         base_mean = 2.0 * i + 0.5
-        mean = base_mean + np.random.uniform(-0.3, 0.3)
+        # mean = base_mean + np.random.uniform(-0.3, 0.3)
+        mean = base_mean
 
         # Randomize standard deviation between 0.3 and 0.7
-        std = np.random.uniform(0.3, 0.7)
+        # std = np.random.uniform(0.3, 0.7)
+        # Not random right now, but can be changed
+        std = 0.4 + 0.05 * i  # Vary std between 0.4 and 0.4 + 0.05*(num_gaussians-1)
 
         gaussian_params.append((mean, std))
 

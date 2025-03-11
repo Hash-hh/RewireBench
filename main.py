@@ -32,9 +32,15 @@ p_intra_add = 0.2  # Probability to add an intra-cluster edge.
 # List of metrics to compute.
 metric_list = [
                 'local_easy1', 'local_easy2', 'local_easy3',
-                'local_hard1', 'local_hard2', 'local_hard3',
-                'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
+                # 'local_hard1', 'local_hard2', 'local_hard3',
+                # 'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
                ]
+# Auxiliary feature parameters.
+aux_feat_multiple = 3  # How many times to multiply the feature dimension.
+aux_feat_variability = True  # Variability in the auxiliary features.
+
+# Edge weight parameter.
+edge_weight = 0.3  # How important are the edge features in the metrics.
 
 # Create the dataset (if not already processed, it will be generated).
 dataset = SyntheticRewiringDataset(root=root,
@@ -51,6 +57,9 @@ dataset = SyntheticRewiringDataset(root=root,
                                    p_intra_remove=p_intra_remove,
                                    p_inter_add=p_inter_add,
                                    p_intra_add=p_intra_add,
-                                   metrics_list=metric_list)
+                                   metrics_list=metric_list,
+                                   aux_feat_multiple=aux_feat_multiple,
+                                   aux_feat_variability=aux_feat_variability,
+                                   edge_weight=edge_weight)
 
 print("Dataset has", len(dataset), "graphs.")
