@@ -7,6 +7,12 @@ def compute_local_hard1(G):
     Multi-Hop Feature Gradient: Measures how node features change as we move away from the node.
     Compares feature values between 1-hop and 3-hop neighborhoods.
     Returns a value in [0,1].
+
+    How to calculate:
+    Identify its 1-hop neighbors (directly connected)
+    Identify its 3-hop neighbors (nodes 3 connections away)
+    Calculate the mean feature value for each neighborhood
+    Compute the normalized absolute difference between these means
     """
     result = 0.0
     count = 0
@@ -48,6 +54,13 @@ def compute_local_hard2(G):
     Neighborhood Feature Consistency: Measures how much a node's feature aligns with
     a weighted combination of its 1-hop and 2-hop neighborhood features.
     Returns a value in [0,1].
+
+    How to calculate:
+    Get the node's feature value
+    Calculate the mean feature value of its direct neighbors (1-hop)
+    Calculate the mean feature value of its neighbors' neighbors (2-hop)
+    Apply a dynamic weighting formula that depends on the node's own feature value
+    Compare the node's actual feature with this weighted prediction
     """
     result = 0.0
     count = 0
@@ -88,6 +101,12 @@ def compute_local_hard3(G):
     Feature Path Coherence: Samples random walks from each node and measures
     how smoothly/coherently features change along the walk paths.
     Returns a value in [0,1].
+
+    How to calculate:
+    Start multiple random walks (3 walks of length 4) from the node
+    Track the feature values of nodes visited along each walk
+    Calculate how smoothly these features change from one node to the next
+    Convert the differences to a coherence score using an exponential transformation
     """
     path_length = 4
     num_paths = 3

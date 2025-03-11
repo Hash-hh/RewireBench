@@ -3,6 +3,7 @@ import networkx as nx
 
 def compute_local_easy1(G):
     """
+    Homophily
     Local metric 1: Average difference between node feature and neighbor features.
     Returns a value in [0,1].
     """
@@ -30,6 +31,7 @@ def compute_local_easy1(G):
 
 def compute_local_easy2(G):
     """
+    Homophily squared
     Local metric 2: Quadratic relationship between node feature and neighbor features.
     Returns a value in [0,1].
     """
@@ -59,6 +61,12 @@ def compute_local_easy3(G):
     """
     Local metric 3: Weighted sum of 1-hop and 2-hop neighborhood features.
     Returns a value in [0,1].
+
+    How to calculate:
+    Get the node's feature value
+    Calculate the average feature value of its direct neighbors (1-hop)
+    Calculate the average feature value of its neighbors' neighbors (2-hop)
+    Compute the absolute difference between the node's value and a weighted combination (70% 1-hop, 30% 2-hop)
     """
     result = 0.0
     count = 0

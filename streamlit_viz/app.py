@@ -234,32 +234,32 @@ def main():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Original Graph")
-        html_file_orig = visualize_graph_pyvis(G_original, "Original Graph", node_color_map, positions, height="600px",
+        st.subheader("Honest Graph")
+        html_file_orig = visualize_graph_pyvis(G_original, "Honest Graph", node_color_map, positions, height="600px",
                                                width="100%")
         st.components.v1.html(open(html_file_orig, 'r').read(), height=600)
 
     with col2:
-        st.subheader("Rewired Graph")
-        html_file_rewired = visualize_graph_pyvis(G_rewired, "Rewired Graph", node_color_map, positions, height="600px",
+        st.subheader("Corrupt Graph")
+        html_file_rewired = visualize_graph_pyvis(G_rewired, "Corrupt Graph", node_color_map, positions, height="600px",
                                                   width="100%")
         st.components.v1.html(open(html_file_rewired, 'r').read(), height=600)
 
     # Add toggle visualization below with much larger canvas
     st.header("Interactive Toggle Visualization")
-    st.write("Toggle between original and rewired graph to see edge changes")
+    st.write("Toggle between honest and Corrupt graph to see edge changes")
 
-    show_rewired = st.toggle("Show Rewired Graph", value=False)
+    show_rewired = st.toggle("Show Corrupt Graph", value=False)
 
-    # Display either original or rewired based on toggle state
+    # Display either Honest or rewired based on toggle state
     # Use toggle_positions for more spacing and a clearer view
     if show_rewired:
-        st.subheader("Showing Rewired Graph")
-        html_file_toggle = visualize_graph_pyvis(G_rewired, "Rewired Graph", node_color_map, toggle_positions,
+        st.subheader("Showing Corrupt Graph")
+        html_file_toggle = visualize_graph_pyvis(G_rewired, "Corrupt Graph", node_color_map, toggle_positions,
                                                  height="900px", width="100%", is_toggle_view=True)
     else:
-        st.subheader("Showing Original Graph")
-        html_file_toggle = visualize_graph_pyvis(G_original, "Original Graph", node_color_map, toggle_positions,
+        st.subheader("Showing Honest Graph")
+        html_file_toggle = visualize_graph_pyvis(G_original, "Honest Graph", node_color_map, toggle_positions,
                                                  height="900px", width="100%", is_toggle_view=True)
 
     st.components.v1.html(open(html_file_toggle, 'r').read(), height=900)

@@ -10,7 +10,7 @@ from y_metrics.compute_all_metrics import compute_all_metrics
 
 class SyntheticRewiringDataset(InMemoryDataset):
     def __init__(self, root, num_graphs=100, min_nodes=40, max_nodes=80,
-                 min_clusters=3, max_clusters=6, num_features=1, H=0.8,
+                 min_clusters=3, max_clusters=6, num_node_features=1, H=0.8,
                  p_intra=0.8, p_inter=0.1,
                  p_inter_remove=0.9, p_intra_remove=0.05,
                  p_inter_add=0.2, p_intra_add=0.2,
@@ -21,7 +21,7 @@ class SyntheticRewiringDataset(InMemoryDataset):
         self.max_nodes = max_nodes
         self.min_clusters = min_clusters
         self.max_clusters = max_clusters
-        self.node_features = num_features
+        self.node_features = num_node_features
         self.H = H
         self.p_intra = p_intra
         self.p_inter = p_inter
