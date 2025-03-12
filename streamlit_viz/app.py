@@ -12,7 +12,7 @@ import community as community_louvain
 # Load the dataset
 @st.cache_resource
 def load_dataset():
-    return SyntheticRewiringDataset(root='../rewire_bench')
+    return SyntheticRewiringDataset(root='../rewire_bench_3')
 
 
 # Convert PyG graph to NetworkX format

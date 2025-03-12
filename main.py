@@ -20,14 +20,14 @@ min_clusters = 2
 max_clusters = 6
 num_node_features = 10  # Number of features per node.
 H = 0.7  # Homophily parameter; with probability H a node gets its preferred one-hot feature. (put 1 to always get the cluster id feature)
+p_inter = 0.1  # Inter-cluster connection probability.
 p_intra = 0.5  # Intra-cluster connection probability.
-p_inter = 0.6  # Inter-cluster connection probability.
 
 # graph rewiring (modification) parameters
-p_inter_remove = 0.5  # Probability to remove an inter-cluster edge.
-p_intra_remove = 0.5  # Probability to remove an intra-cluster edge.
-p_inter_add = 0.5  # Probability to add an inter-cluster edge.
-p_intra_add = 0.5  # Probability to add an intra-cluster edge.
+p_inter_remove = 0.7  # Probability to remove an inter-cluster edge.
+p_intra_remove = 0.7  # Probability to remove an intra-cluster edge.
+p_inter_add = 0.8  # Probability to add an inter-cluster edge.
+p_intra_add = 0.8  # Probability to add an intra-cluster edge.
 
 # List of metrics to compute.
 metric_list = [
@@ -40,7 +40,7 @@ aux_feat_multiple = 5  # How many times to multiply the feature dimension. (Max 
 aux_feat_variability = True  # Variability in the auxiliary features.
 
 # Edge weight parameter.
-edge_weight = 0.5  # How important are the edge features in the metrics.
+edge_weight = 0.7  # How important are the edge features in the metrics.
 
 # Create the dataset (if not already processed, it will be generated).
 dataset = SyntheticRewiringDataset(root=root,
