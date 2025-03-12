@@ -3,6 +3,7 @@ import numpy as np
 from y_metrics.global_metrics import compute_modularity, compute_spectral_gap, compute_random_walk_stability, compute_conductance
 from y_metrics.local_easy_metrics import compute_local_easy1, compute_local_easy2, compute_local_easy3
 from y_metrics.local_hard_metrics import compute_local_hard1, compute_local_hard2, compute_local_hard3
+from y_metrics.local_hard_metrics_2 import compute_local_hard4, compute_local_hard5, compute_local_hard6
 
 
 def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weight=0.3):
@@ -22,9 +23,12 @@ def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weig
     G = add_auxiliary_node_features(G, multiple=multiple, variability=variability)
 
     metric_funcs = {
-        'local_easy1': compute_local_easy1,
-        'local_easy2': compute_local_easy2,
-        'local_easy3': compute_local_easy3,
+        # 'local_easy1': compute_local_easy1,
+        # 'local_easy2': compute_local_easy2,
+        # 'local_easy3': compute_local_easy3,
+        'local_hard4': compute_local_hard4,
+        'local_hard5': compute_local_hard5,
+        'local_hard6': compute_local_hard6,
         'local_hard1': compute_local_hard1,
         'local_hard2': compute_local_hard2,
         'local_hard3': compute_local_hard3,

@@ -20,19 +20,20 @@ min_clusters = 2
 max_clusters = 6
 num_node_features = 10  # Number of features per node.
 H = 0.7  # Homophily parameter; with probability H a node gets its preferred one-hot feature. (put 1 to always get the cluster id feature)
-p_inter = 0.1  # Inter-cluster connection probability.
-p_intra = 0.5  # Intra-cluster connection probability.
+p_inter = 0.4  # Inter-cluster connection probability. (outside the cluster)
+p_intra = 0.6  # Intra-cluster connection probability. (within the cluster)
 
 # graph rewiring (modification) parameters
-p_inter_remove = 0.7  # Probability to remove an inter-cluster edge.
-p_intra_remove = 0.7  # Probability to remove an intra-cluster edge.
-p_inter_add = 0.8  # Probability to add an inter-cluster edge.
-p_intra_add = 0.8  # Probability to add an intra-cluster edge.
+p_inter_remove = 0.9  # Probability to remove an inter-cluster edge.
+p_intra_remove = 0.8  # Probability to remove an intra-cluster edge.
+p_inter_add = 0.01  # Probability to add an inter-cluster edge.
+p_intra_add = 0.02  # Probability to add an intra-cluster edge.
 
 # List of metrics to compute.
 metric_list = [
-                'local_easy1', 'local_easy2', 'local_easy3',
-                'local_hard1', 'local_hard2', 'local_hard3',
+                # 'local_easy1', 'local_easy2', 'local_easy3',
+                # 'local_hard1', 'local_hard2', 'local_hard3',
+                'local_hard5',
                 # 'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
                ]
 # Auxiliary feature parameters.
