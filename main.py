@@ -18,29 +18,29 @@ min_nodes = 30
 max_nodes = 60
 min_clusters = 2
 max_clusters = 6
-num_node_features = 3  # Number of features per node. Note: only one feature is used for y metrics.
-H = 1  # Homophily parameter; with probability H a node gets its preferred one-hot feature. (put 1 to always get the cluster id feature)
-p_intra = 0.8  # Intra-cluster connection probability.
-p_inter = 0.1  # Inter-cluster connection probability.
+num_node_features = 10  # Number of features per node.
+H = 0.7  # Homophily parameter; with probability H a node gets its preferred one-hot feature. (put 1 to always get the cluster id feature)
+p_intra = 0.5  # Intra-cluster connection probability.
+p_inter = 0.6  # Inter-cluster connection probability.
 
 # graph rewiring (modification) parameters
-p_inter_remove = 0.9  # Probability to remove an inter-cluster edge.
-p_intra_remove = 0.05  # Probability to remove an intra-cluster edge.
-p_inter_add = 0.2  # Probability to add an inter-cluster edge.
-p_intra_add = 0.2  # Probability to add an intra-cluster edge.
+p_inter_remove = 0.5  # Probability to remove an inter-cluster edge.
+p_intra_remove = 0.5  # Probability to remove an intra-cluster edge.
+p_inter_add = 0.5  # Probability to add an inter-cluster edge.
+p_intra_add = 0.5  # Probability to add an intra-cluster edge.
 
 # List of metrics to compute.
 metric_list = [
                 'local_easy1', 'local_easy2', 'local_easy3',
-                # 'local_hard1', 'local_hard2', 'local_hard3',
+                'local_hard1', 'local_hard2', 'local_hard3',
                 # 'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
                ]
 # Auxiliary feature parameters.
-aux_feat_multiple = 3  # How many times to multiply the feature dimension.
+aux_feat_multiple = 5  # How many times to multiply the feature dimension. (Max 5)
 aux_feat_variability = True  # Variability in the auxiliary features.
 
 # Edge weight parameter.
-edge_weight = 0.3  # How important are the edge features in the metrics.
+edge_weight = 0.5  # How important are the edge features in the metrics.
 
 # Create the dataset (if not already processed, it will be generated).
 dataset = SyntheticRewiringDataset(root=root,

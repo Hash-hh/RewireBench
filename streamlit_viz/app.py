@@ -12,7 +12,7 @@ import community as community_louvain
 # Load the dataset
 @st.cache_resource
 def load_dataset():
-    return SyntheticRewiringDataset(root='rewire_bench')
+    return SyntheticRewiringDataset(root='../rewire_bench')
 
 
 # Convert PyG graph to NetworkX format
@@ -21,7 +21,11 @@ def pyg_to_nx(data, use_original=False):
 
     # Add nodes with attributes
     for i in range(data.num_nodes):
-        G.add_node(i, x=data.x[i].item())
+        # Store the whole feature vector
+        node_features = data.x[i].numpy()
+        # Add block/cluster information from node_cluster_labels
+        block = int(data.node_cluster_labels[i].item()) if hasattr(data, 'node_cluster_labels') else None
+        G.add_node(i, x=node_features, block=block)
 
     # Select proper edges based on whether we want original or rewired
     if use_original:
@@ -35,7 +39,11 @@ def pyg_to_nx(data, use_original=False):
     for i in range(edge_index.shape[1]):
         src = edge_index[0, i].item()
         dst = edge_index[1, i].item()
-        attr = {"is_intra": edge_attr[i, 0].item() == 1}
+        # Store edge attributes
+        attr = {
+            "is_intra": edge_attr[i, 0].item() == 1,
+            "edge_attr": edge_attr[i].numpy()
+        }
         G.add_edge(src, dst, **attr)
 
     return G
@@ -88,6 +96,50 @@ def get_consistent_positions(G, for_toggle=False):
     return final_layout
 
 
+def get_node_color_map(G, color_by, feature_idx=0):
+    node_color_map = {}
+
+    if color_by == "cluster":
+        # Color by cluster/block
+        blocks = [G.nodes[i].get('block') for i in range(len(G.nodes))]
+        unique_blocks = sorted(set(blocks))
+
+        # Use a predefined distinct color palette
+        distinct_colors = [
+            '#e41a1c', '#377eb8', '#4daf4a', '#984ea3',
+            '#ff7f00', '#ffff33', '#a65628', '#f781bf',
+            '#999999', '#66c2a5', '#fc8d62', '#8da0cb',
+            '#e78ac3', '#a6d854', '#ffd92f', '#e5c494'
+        ]
+
+        # If we have more blocks than colors, cycle through the colors
+        block_to_color = {}
+        for i, block in enumerate(unique_blocks):
+            block_to_color[block] = distinct_colors[i % len(distinct_colors)]
+
+        # Map nodes to colors
+        for i in range(len(G.nodes)):
+            block = G.nodes[i].get('block')
+            node_color_map[i] = block_to_color.get(block, '#888888')
+
+    else:  # Color by feature
+        # Extract selected feature for all nodes
+        node_features = [G.nodes[i]['x'][feature_idx] for i in range(len(G.nodes))]
+        min_feat, max_feat = min(node_features), max(node_features)
+
+        for i, feat in enumerate(node_features):
+            if max_feat > min_feat:
+                norm_feat = (feat - min_feat) / (max_feat - min_feat)
+            else:
+                norm_feat = 0.5
+
+            r = int(255 * norm_feat)
+            b = int(255 * (1 - norm_feat))
+            node_color_map[i] = f'#{r:02x}00{b:02x}'
+
+    return node_color_map
+
+
 # Visualize graph with PyVis
 def visualize_graph_pyvis(G, title, node_color_map, positions, height="600px", width="100%", is_toggle_view=False):
     # Configure Network
@@ -127,10 +179,15 @@ def visualize_graph_pyvis(G, title, node_color_map, positions, height="600px", w
         x, y = positions[node]
         x *= 100  # Scale for PyVis
         y *= 100
+
+        # Create detailed tooltip with all node features
+        features_str = ", ".join([f"f{i}: {val:.2f}" for i, val in enumerate(data['x'])])
+        cluster_str = f"Cluster: {data.get('block')}" if data.get('block') is not None else ""
+
         net.add_node(
             node,
             label=f"{node}",
-            title=f"Node {node}\nFeature: {data['x']:.2f}",
+            title=f"Node {node}\n{cluster_str}\n{features_str}",
             color=color,
             x=x,
             y=y,
@@ -140,13 +197,18 @@ def visualize_graph_pyvis(G, title, node_color_map, positions, height="600px", w
     # Color edges based on intra/inter cluster
     for source, target, data in G.edges(data=True):
         color = '#00FF00' if data.get('is_intra', False) else '#FF0000'
-        title = "Intra-cluster edge" if data.get('is_intra', False) else "Inter-cluster edge"
-        net.add_edge(source, target, color=color, title=title, width=edge_width)
+
+        # Create detailed edge tooltip
+        edge_type = "Intra-cluster edge" if data.get('is_intra', False) else "Inter-cluster edge"
+        edge_attr_str = f"Edge features: {data.get('edge_attr', [])}"
+
+        net.add_edge(source, target, color=color, title=f"{edge_type}\n{edge_attr_str}", width=edge_width)
 
     # Generate HTML file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmpfile:
         net.save_graph(tmpfile.name)
         return tmpfile.name
+
 
 
 def display_metric_names(metric_index):
@@ -197,16 +259,24 @@ def main():
     G_original = pyg_to_nx(graph_data, use_original=True)
     G_rewired = pyg_to_nx(graph_data, use_original=False)
 
-    # Create node color mapping based on features
-    node_features = graph_data.x.numpy().flatten()
-    min_feat, max_feat = np.min(node_features), np.max(node_features)
-    norm_features = (node_features - min_feat) / (max_feat - min_feat) if max_feat > min_feat else node_features
+    # Determine how many features are available
+    num_features = len(G_original.nodes[0]['x'])
 
-    node_color_map = {}
-    for i, feat in enumerate(norm_features):
-        r = int(255 * feat)
-        b = int(255 * (1 - feat))
-        node_color_map[i] = f'#{r:02x}00{b:02x}'
+    # Display options for node coloring
+    st.sidebar.header("Visualization Options")
+    color_options = ["Cluster"] + [f"Feature {i}" for i in range(num_features)]
+    color_by = st.sidebar.selectbox("Color nodes by:", color_options)
+
+    # Convert choice to parameters for coloring function
+    if color_by == "Cluster":
+        color_mode = "cluster"
+        feature_idx = 0
+    else:
+        color_mode = "feature"
+        feature_idx = int(color_by.split(" ")[1])  # Extract feature index from "Feature X"
+
+    # Create node color mapping based on selected feature or cluster
+    node_color_map = get_node_color_map(G_original, color_mode, feature_idx)
 
     # Store positions in session state to maintain them across rerenders
     if 'positions' not in st.session_state or 'last_graph_id' not in st.session_state or st.session_state.last_graph_id != selected_idx:
@@ -223,12 +293,27 @@ def main():
 
     # Add legend at the top
     st.header("Graph Visualizations")
-    st.markdown("""
-    <div style="background-color:#f0f0f0; padding:10px; border-radius:5px; margin-bottom:15px">
-        <b>Legend:</b> Node colors show feature values (blue=low, red=high).
-        Edge colors: Green=Intra-cluster, Red=Inter-cluster
-    </div>
-    """, unsafe_allow_html=True)
+
+    # Create color legend based on selected coloring method
+    if color_mode == "feature":
+        feature_name = color_by.split(" ")[1]
+        legend_html = f"""
+        <div style="background-color:#f0f0f0; padding:10px; border-radius:5px; margin-bottom:15px">
+            <b>Legend:</b> Node colors show {color_by} values (blue=low, red=high).
+            Edge colors: Green=Intra-cluster, Red=Inter-cluster.<br>
+            Hover over nodes and edges to see detailed information including all features and cluster membership.
+        </div>
+        """
+    else:  # cluster mode
+        legend_html = """
+        <div style="background-color:#f0f0f0; padding:10px; border-radius:5px; margin-bottom:15px">
+            <b>Legend:</b> Node colors represent different clusters.
+            Edge colors: Green=Intra-cluster, Red=Inter-cluster.<br>
+            Hover over nodes and edges to see detailed information including all features.
+        </div>
+        """
+
+    st.markdown(legend_html, unsafe_allow_html=True)
 
     # Create side-by-side visualizations
     col1, col2 = st.columns(2)
@@ -268,7 +353,6 @@ def main():
     os.unlink(html_file_orig)
     os.unlink(html_file_rewired)
     os.unlink(html_file_toggle)
-
 
 if __name__ == "__main__":
     main()

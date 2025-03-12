@@ -55,18 +55,18 @@ def generate_synthetic_graph(num_nodes, num_clusters, num_features=1, H=0.8, p_i
 
     # Define Gaussian distributions - we will have num_clusters+num_features-1 distributions
     # to ensure unique combinations for each cluster
-    num_gaussians = min(num_clusters + num_features - 1, 8)
+    num_gaussians = max(num_clusters + num_features - 1, num_features * 2)
     gaussian_params = []
     for i in range(num_gaussians):
         # Randomize mean within a reasonable range around base position
         base_mean = 2.0 * i + 0.5
-        # mean = base_mean + np.random.uniform(-0.3, 0.3)
-        mean = base_mean
+        mean = base_mean + np.random.uniform(-0.2, 0.2)
+        # mean = base_mean
 
         # Randomize standard deviation between 0.3 and 0.7
-        # std = np.random.uniform(0.3, 0.7)
+        std = 0.4 + np.random.uniform(0.2, 0.4) * i
         # Not random right now, but can be changed
-        std = 0.4 + 0.05 * i  # Vary std between 0.4 and 0.4 + 0.05*(num_gaussians-1)
+        # std = 0.4 + 0.05 * i  # Vary std between 0.4 and 0.4 + 0.05*(num_gaussians-1)
 
         gaussian_params.append((mean, std))
 

@@ -92,6 +92,8 @@ class SyntheticRewiringDataset(InMemoryDataset):
             # Store computed labels (each as a tensor of shape [4]).
             data.y = torch.tensor(metrics_org, dtype=torch.float32)
             data.y_rewire = torch.tensor(metrics_rewire, dtype=torch.float32)
+            # add node cluster labels
+            data.node_cluster_labels = torch.tensor([G.nodes[n]['block'] for n in G.nodes()], dtype=torch.long)
 
             data_list.append(data)
 
