@@ -4,6 +4,8 @@ from y_metrics.global_metrics import compute_modularity, compute_spectral_gap, c
 from y_metrics.local_easy_metrics import compute_local_easy1, compute_local_easy2, compute_local_easy3
 from y_metrics.local_hard_metrics import compute_local_hard1, compute_local_hard2, compute_local_hard3
 from y_metrics.local_hard_metrics_2 import compute_local_hard4, compute_local_hard5, compute_local_hard6
+from y_metrics.motif_metrics import balanced_motif_feature_metric
+from y_metrics.message_passing_metrics import custom_message_passing_metric
 
 
 def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weight=0.3):
@@ -23,9 +25,9 @@ def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weig
     G = add_auxiliary_node_features(G, multiple=multiple, variability=variability)
 
     metric_funcs = {
-        # 'local_easy1': compute_local_easy1,
-        # 'local_easy2': compute_local_easy2,
-        # 'local_easy3': compute_local_easy3,
+        'local_easy1': compute_local_easy1,
+        'local_easy2': compute_local_easy2,
+        'local_easy3': compute_local_easy3,
         'local_hard4': compute_local_hard4,
         'local_hard5': compute_local_hard5,
         'local_hard6': compute_local_hard6,
@@ -36,13 +38,15 @@ def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weig
         'spectral_gap': compute_spectral_gap,
         'random_walk_stability': lambda g, edge_weight: compute_random_walk_stability(g, T=10, num_walks=100,
                                                                                       edge_weight=edge_weight),
-        'conductance': compute_conductance
+        'conductance': compute_conductance,
+        'balanced_motif_feature_metric': lambda g: balanced_motif_feature_metric(g, max_hop=3),
+        'custom_message_passing_metric': custom_message_passing_metric
     }
 
     if metrics is None:
         metrics = list(metric_funcs.keys())
 
-    results = [metric_funcs[m](G, edge_weight) for m in metrics]
+    results = [metric_funcs[m](G) for m in metrics]
     return np.array(results, dtype=np.float32)
 
 

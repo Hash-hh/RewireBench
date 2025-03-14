@@ -24,8 +24,8 @@ p_inter = 0.4  # Inter-cluster connection probability. (outside the cluster)
 p_intra = 0.6  # Intra-cluster connection probability. (within the cluster)
 
 # graph rewiring (modification) parameters
-p_inter_remove = 0.9  # Probability to remove an inter-cluster edge.
-p_intra_remove = 0.8  # Probability to remove an intra-cluster edge.
+p_inter_remove = 0.8  # Probability to remove an inter-cluster edge.
+p_intra_remove = 0.7  # Probability to remove an intra-cluster edge.
 p_inter_add = 0.01  # Probability to add an inter-cluster edge.
 p_intra_add = 0.02  # Probability to add an intra-cluster edge.
 
@@ -33,7 +33,8 @@ p_intra_add = 0.02  # Probability to add an intra-cluster edge.
 metric_list = [
                 # 'local_easy1', 'local_easy2', 'local_easy3',
                 # 'local_hard1', 'local_hard2', 'local_hard3',
-                'local_hard5',
+                'custom_message_passing_metric',
+                # 'balanced_motif_feature_metric',
                 # 'modularity', 'spectral_gap', 'random_walk_stability', 'conductance'
                ]
 # Auxiliary feature parameters.
