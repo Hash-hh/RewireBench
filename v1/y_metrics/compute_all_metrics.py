@@ -1,11 +1,11 @@
 import networkx as nx
 import numpy as np
-from y_metrics.global_metrics import compute_modularity, compute_spectral_gap, compute_random_walk_stability, compute_conductance
-from y_metrics.local_easy_metrics import compute_local_easy1, compute_local_easy2, compute_local_easy3
-from y_metrics.local_hard_metrics import compute_local_hard1, compute_local_hard2, compute_local_hard3
-from y_metrics.local_hard_metrics_2 import compute_local_hard4, compute_local_hard5, compute_local_hard6
-from y_metrics.motif_metrics import balanced_motif_feature_metric
-from y_metrics.message_passing_metrics import custom_message_passing_metric
+from v1.y_metrics.global_metrics import compute_modularity, compute_spectral_gap, compute_random_walk_stability, compute_conductance
+from v1.y_metrics.local_easy_metrics import compute_local_easy1, compute_local_easy2, compute_local_easy3
+from v1.y_metrics.local_hard_metrics import compute_local_hard1, compute_local_hard2, compute_local_hard3
+from v1.y_metrics.local_hard_metrics_2 import compute_local_hard4, compute_local_hard5, compute_local_hard6
+from v1.y_metrics.motif_metrics import balanced_motif_feature_metric
+from v1.y_metrics.message_passing_metrics import custom_message_passing_metric
 
 
 def compute_all_metrics(G, metrics=None, multiple=1, variability=True, edge_weight=0.3):

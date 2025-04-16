@@ -1,8 +1,7 @@
 import streamlit as st
 import networkx as nx
-import numpy as np
 import pandas as pd
-from pyg_dataset import SyntheticRewiringDataset
+from v1.pyg_dataset import SyntheticRewiringDataset
 import tempfile
 import os
 from pyvis.network import Network
@@ -12,7 +11,7 @@ import community as community_louvain
 # Load the dataset
 @st.cache_resource
 def load_dataset():
-    return SyntheticRewiringDataset(root='../rewire_bench')
+    return SyntheticRewiringDataset(root='../rewire_bench_easy')
 
 
 # Convert PyG graph to NetworkX format

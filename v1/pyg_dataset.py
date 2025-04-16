@@ -5,7 +5,7 @@ from torch_geometric.data import InMemoryDataset, Data
 from graph_rewiring import modify_graph
 from graph_generation import generate_synthetic_graph
 from utils import convert_to_pyg
-from y_metrics.compute_all_metrics import compute_all_metrics
+from v1.y_metrics.compute_all_metrics import compute_all_metrics
 
 
 class SyntheticRewiringDataset(InMemoryDataset):
