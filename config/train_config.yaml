@@ -1,0 +1,29 @@
+# Training Configuration for Chain-of-Blocks GNN Experiment
+
+experiment:
+  seed: 42  # Base random seed for reproducibility
+  num_runs: 2  # Number of runs to average results
+  eval_oracle_edges: true  # Whether to also evaluate performance with oracle edges
+
+dataset:
+  root_dir: "./CliqueChain"  # Root directory for dataset
+  config_path: "./config.yaml"  # Path to dataset configuration
+  train_ratio: 0.7  # Fraction of dataset for training
+  val_ratio: 0.15  # Fraction of dataset for validation (test is the remainder)
+
+model:
+  gnn_type: "GraphConv"  # Options: GCN, SAGE, GAT, GIN, GraphConv
+  hidden_dim: 128  # Hidden dimension size
+  num_layers: 6  # Number of GNN layers
+  dropout: 0.0  # Dropout rate
+  batch_norm: true  # Whether to use batch normalization
+  residual: false  # Whether to use residual connections
+  readout: "sum"  # Graph pooling method: mean, sum, max
+
+training:
+  batch_size: 256  # Batch size for training
+  learning_rate: 0.001  # Initial learning rate
+  weight_decay: 0.0001  # L2 regularization
+  epochs: 200  # Maximum number of epochs
+  patience: 100  # Early stopping patience
+  scheduler_patience: 10  # Learning rate scheduler patience

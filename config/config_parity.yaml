@@ -1,0 +1,31 @@
+# Parity task configuration
+graph:
+  nodes_per_block: 10
+  num_blocks: 8
+  feature_dim: 16
+  inter_block_connections: 1  # Reduced connections to make structure more important
+  distance_threshold: 0.5
+
+dataset:
+  num_graphs: 1000
+
+task:
+  type: "parity"
+  special_node_selection: "one_per_block"
+  oracle_connection_type: "all_to_all"
+  nonlinearity: null  # No nonlinearity for parity task
+
+
+
+# Create a dataset where the target depends on counting special nodes
+# reachable within a certain number of hops.
+
+# Standard chain-block structure
+
+# Randomly assign binary features to special nodes (0 or 1)
+
+# The target is a parity function of all the special nodes that are
+# reachable from a source node within k hops
+
+# With normal edges, k-hop neighbors might be unreachable within the GNN's layers
+# With oracle edges, all special nodes become 1-hop neighbors

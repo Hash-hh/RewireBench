@@ -1,0 +1,26 @@
+dataset:
+  root: "./data/EndpointParity"
+  L: 8
+  M: 10
+  num_graphs: 5000
+  n_distractors: [5, 20]
+  force_regen: False
+
+model:
+  conv_type: "GCN"         # options: GCN, SAGE, GIN
+  hidden_dim: 128
+  num_layers: 2
+  readout: "add"          # options: mean, max, add
+  dropout: 0.2
+
+train:
+  epochs: 40
+  batch_size: 64
+  learning_rate: 0.0005
+  weight_decay: 1.e-4
+  val_split: 0.1
+  test_split: 0.1
+
+visualization:
+  num_samples_per_class: 5
+  out_dir: "viz"
